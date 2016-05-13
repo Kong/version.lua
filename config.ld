@@ -1,0 +1,13 @@
+project='version.lua'
+title='version'
+description='Module to do version comparisons'
+format='discount'
+file='./src/'
+dir='doc'
+readme='readme.md'
+sort=true
+sort_modules=true
+not_luadoc=true
+all=false
+
+

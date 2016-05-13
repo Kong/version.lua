@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>version</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>version.lua</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>version</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>version</code></h1>
+<p>Version comparison library for Lua.</p>
+<p> Comparison is simple and straightforward, no interpretation is done whatsoever
+ regarding compatibility etc. If that's what you're looking for, then please
+ checkout the semantic versioning specification (SemVer).</p>
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ local ver = require(&quot;version&quot;)
+
+ local v = ver.version(&quot;3.1.0&quot;)
+ assert( v == ver.version(&quot;3.1&quot;))   -- missing elements default to zero, and hence are equal
+ assert( v &gt; ver.version(&quot;3.0&quot;))
+
+ local r = ver.range(&quot;2.75&quot;, &quot;3.50.3&quot;)
+ assert(r:matches(v))
+
+ local compatible = version.set():allowed(&quot;1.1&quot;,&quot;1.1.999999&quot;)  -- upwards compatibility check
+ assert(compatible:matches(&quot;1.1.3&quot;))
+
+ -- adding elements in a chained fashion
+ compatible:allowed(&quot;2.1&quot;, &quot;2.5&quot;):disallowed(&quot;2.3&quot;) -- 2.3 was a buggy version...
+
+ assert(compatible:matches(&quot;1.1.3&quot;))
+ assert(compatible:matches(&quot;2.4&quot;))
+ assert(not compatible:matches(&quot;2.0&quot;))
+ assert(not compatible:matches(&quot;2.3&quot;))
+ </pre>
+    </ul>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: Mashape Inc.</li>
+        <li><strong>License</strong>: Apache 2.0</li>
+        <li><strong>Author</strong>: Thijs Schreijer</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#range">range (v1, v2)</a></td>
+	<td class="summary">Creates a version range.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#range:matches">range:matches (v)</a></td>
+	<td class="summary">Matches a version on a range.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set">set ()</a></td>
+	<td class="summary">Creates a version set.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set:allowed">set:allowed (v1, v2)</a></td>
+	<td class="summary">Adds an ALLOWED range to the set.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set:disallowed">set:disallowed (v1, v2)</a></td>
+	<td class="summary">Adds a DISALLOWED range to the set.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set:matches">set:matches (v1)</a></td>
+	<td class="summary">Matches a version against the set of allowed and disallowed versions.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#version">version (v)</a></td>
+	<td class="summary">Creates a new version object from a string.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "range"></a>
+    <strong>range (v1, v2)</strong>
+    </dt>
+    <dd>
+    Creates a version range.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v1</span>
+         The FROM version of the range (string or <a href="index.html#">version</a> object). If <code>nil</code>, assumed to be 0.
+        </li>
+        <li><span class="parameter">v2</span>
+         (optional) The TO version of the range (string or <a href="index.html#">version</a> object). If omitted it will default to <code>v1</code>.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        range object with <code>from</code> and <code>to</code> fields and <a href="index.html#set:matches">set:matches</a> method.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "range:matches"></a>
+    <strong>range:matches (v)</strong>
+    </dt>
+    <dd>
+    Matches a version on a range.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+         Version (string or <a href="index.html#">version</a> object) to match
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> when the version matches the range, <code>false</code> otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set"></a>
+    <strong>set ()</strong>
+    </dt>
+    <dd>
+    Creates a version set.  A set contains a number of allowed and disallowed version ranges.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        a <a href="index.html#set">set</a> object, with <code>ok</code> and <code>nok</code> lists and a <a href="index.html#set:matches">set:matches</a> method
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set:allowed"></a>
+    <strong>set:allowed (v1, v2)</strong>
+    </dt>
+    <dd>
+    Adds an ALLOWED range to the set.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v1</span>
+         Version or range, if version, the FROM version in either string or <a href="index.html#">version</a> object format
+        </li>
+        <li><span class="parameter">v2</span>
+         Version (optional), TO version in either string or <a href="index.html#">version</a> object format
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set:disallowed"></a>
+    <strong>set:disallowed (v1, v2)</strong>
+    </dt>
+    <dd>
+    Adds a DISALLOWED range to the set.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v1</span>
+         Version or range, if version, the FROM version in either string or <a href="index.html#">version</a> object format
+        </li>
+        <li><span class="parameter">v2</span>
+         Version (optional), TO version in either string or <a href="index.html#">version</a> object format
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set:matches"></a>
+    <strong>set:matches (v1)</strong>
+    </dt>
+    <dd>
+    Matches a version against the set of allowed and disallowed versions.
+ NOTE: disallowed has a higher precedence, so a version that matches the allowed-set,
+ but also the dis-allowed set, will return <code>false</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v1</span>
+         Version to match (either string or <a href="index.html#">version</a> object).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> if the version matches the set, or <code>false</code> otherwise
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "version"></a>
+    <strong>version (v)</strong>
+    </dt>
+    <dd>
+    Creates a new version object from a string.  The returned table will have
+ comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
+ will be assumed to be "0" on the least significant side of the version string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+         String formatted as numbers separated by dots (no limit on number of elements).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        version object
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-05-13 18:29:16 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
