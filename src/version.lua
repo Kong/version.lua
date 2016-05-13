@@ -15,7 +15,7 @@
 -- local r = ver.range("2.75", "3.50.3")
 -- assert(r:matches(v))
 --
--- local compatible = version.set():allowed("1.1","1.1.999999")  -- upwards compatibility check
+-- local compatible = version.set("1.1","1.1.999999")  -- upwards compatibility check
 -- assert(compatible:matches("1.1.3"))
 --
 -- -- adding elements in a chained fashion
