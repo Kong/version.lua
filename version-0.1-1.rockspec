@@ -3,7 +3,7 @@ version = "0.1-1"
 
 source = {
   url = "https://github.com/Mashape/version.lua/archive/v0_1.tar.gz",
-  dir = ""
+  dir = "version.lua-0_1"
 }
 
 description = {
