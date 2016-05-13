@@ -81,6 +81,9 @@ local mt_version = {
       end
       return false
     end,
+    __tostring = function(self)
+      return table.concat(self, ".")
+    end,
 }
 
 --- Creates a new version object from a string. The returned table will have
@@ -91,7 +94,7 @@ local mt_version = {
 _M.version = function(v)
   local t = split(v, "%.")
   for i, s in ipairs(t) do
-    n = tonumber(s)
+    local n = tonumber(s)
     assert(n, "Not a valid version element; "..tostring(s))
     t[i] = n
   end
@@ -112,8 +115,16 @@ local mt_range = {
         end
         
         return (v >= self.from) and (v <= self.to)
+      end,
+    },
+    __tostring = function(self)
+      local f, t = tostring(self.from), tostring(self.to)
+      if f == t then 
+        return f 
+      else
+        return f .. " to " .. t
       end
-    }
+    end,
 }
 
 --- Creates a version range. 
@@ -191,16 +202,43 @@ local mt_set = {
         end
         return true
       end,
-    }
+    },
+    __tostring = function(self)
+      local ok, nok
+      if #self.ok == 1 then
+        ok = tostring(self.ok[1])
+      elseif #self.ok > 1 then
+        ok = tostring(self.ok[1])
+        for i = 2, #self.ok - 1 do
+          ok = ok .. ", " ..tostring(self.ok[i])
+        end
+        ok = ok .. " and " .. tostring(self.ok[#self.ok])
+      end
+      if #self.nok == 1 then
+        nok = tostring(self.nok[1])
+      elseif #self.nok > 1 then
+        nok = tostring(self.nok[1])
+        for i = 2, #self.nok - 1 do
+          nok = nok .. ", " ..tostring(self.nok[i])
+        end
+        nok = nok .. " and " .. tostring(self.nok[#self.nok])
+      end
+      if ok and nok then
+        return ok .. ", but not " .. nok
+      else
+        return ok
+      end
+    end,
 }
 
 --- Creates a version set. A set contains a number of allowed and disallowed version ranges.
+-- @param ... initial version/range to allow, see `set:allowed` for parameter descriptions
 -- @return a `set` object, with `ok` and `nok` lists and a `set:matches` method 
-_M.set = function()
+_M.set = function(...)
   return setmetatable({
     ok = {},
     nok = {},
-  }, mt_set)
+  }, mt_set):allowed(...)
 end
 
 return _M
