@@ -17,8 +17,19 @@
 -- local r = ver.range("2.75", "3.50.3")
 -- assert(r:matches(v))
 --
+<<<<<<< HEAD
 -- -- create a set of multiple ranges, adding elements in a chained fashion
 -- local compatible = ver.set("1.1","1.2"):allowed("2.1", "2.5"):disallowed("2.3")
+=======
+-- -- upwards compatibility check (disallowed overides allowed)
+-- local compatible = ver.set("1.1","1.2"):disallowed("1.2")
+-- assert(compatible:matches("1.1.3"))
+--
+-- -- adding elements in a chained fashion
+-- compatible:allowed("2.1", "2.5"):disallowed("2.3") -- 2.3 specifically disallowed
+--
+-- print(compatible)  --> prints "1.1 to 1.2 and 2.1 to 2.5, but not 1.2 and 2.3"
+>>>>>>> 140dc4aac4066ea52b19105e0a83ea8f63586772
 --
 -- assert(compatible:matches("1.1.3"))
 -- assert(compatible:matches("1.1.3"))
