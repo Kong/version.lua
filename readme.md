@@ -22,5 +22,6 @@ Tests are in the `spec` folder.
 
 History
 =======
-0.2   14-May-2016     Added 'tostring' meta-methods, and a required initial version fro 'set'
-0.1   13-May-2016     Initial version
+
+- 0.2   14-May-2016     Added 'tostring' meta-methods, and a required initial version for 'set'
+- 0.1   13-May-2016     Initial version

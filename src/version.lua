@@ -7,24 +7,32 @@
 --
 -- @usage
 -- local ver = require("version")
--- 
+--
+-- -- create a version and perform some comparisons
 -- local v = ver.version("3.1.0")
 -- assert( v == ver.version("3.1"))   -- missing elements default to zero, and hence are equal
 -- assert( v > ver.version("3.0"))
 --
+-- -- create a version range, and check whether a version is within that range
 -- local r = ver.range("2.75", "3.50.3")
 -- assert(r:matches(v))
 --
--- local compatible = version.set():allowed("1.1","1.1.999999")  -- upwards compatibility check
+-- -- create a set of multiple ranges, adding elements in a chained fashion
+-- local compatible = ver.set("1.1","1.2"):allowed("2.1", "2.5"):disallowed("2.3")
+--
 -- assert(compatible:matches("1.1.3"))
---
--- -- adding elements in a chained fashion
--- compatible:allowed("2.1", "2.5"):disallowed("2.3") -- 2.3 was a buggy version...
---
 -- assert(compatible:matches("1.1.3"))
 -- assert(compatible:matches("2.4"))
 -- assert(not compatible:matches("2.0"))
 -- assert(not compatible:matches("2.3"))
+--
+-- -- print a formatted set
+-- print(compatible) --> "1.1 to 1.2 and 2.1 to 2.5, but not 2.3"
+--
+-- -- create an upwards comptibility check, allowing all version 1.x
+-- local c = ver.set("1.0","2.0"):disallowed("2.0")
+-- assert(c:matches("1.4"))
+-- assert(not c:matches("2.0"))
 -- 
 -- @copyright Mashape Inc.
 -- @author Thijs Schreijer
@@ -57,6 +65,8 @@ local function split(str, pat)
 end
 
 
+--- Version.
+-- object representing a single version
 -- @section version
 
 local mt_version = {
@@ -101,6 +111,8 @@ _M.version = function(v)
   return setmetatable(t, mt_version)
 end
 
+--- Range.
+-- object representing a range of versions
 -- @section range
 
 local mt_range = {
@@ -145,7 +157,10 @@ _M.range = function(v1,v2)
   }, mt_range)
 end
 
+--- Set.
+-- object representing a set of version ranges
 -- @section set
+
 local insertr = function(t, v1, v2)
   if getmetatable(v1) == mt_range then
     assert (v2 == nil, "First parameter was a range, second must be nil.")

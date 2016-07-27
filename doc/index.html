@@ -29,7 +29,9 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Functions">Functions</a></li>
+<li><a href="#Version">Version </a></li>
+<li><a href="#Range">Range </a></li>
+<li><a href="#Set">Set </a></li>
 </ul>
 
 
@@ -56,23 +58,31 @@
         <pre class="example">
  local ver = require(&quot;version&quot;)
 
+ -- create a version and perform some comparisons
  local v = ver.version(&quot;3.1.0&quot;)
  assert( v == ver.version(&quot;3.1&quot;))   -- missing elements default to zero, and hence are equal
  assert( v &gt; ver.version(&quot;3.0&quot;))
 
+ -- create a version range, and check whether a version is within that range
  local r = ver.range(&quot;2.75&quot;, &quot;3.50.3&quot;)
  assert(r:matches(v))
 
- local compatible = version.set():allowed(&quot;1.1&quot;,&quot;1.1.999999&quot;)  -- upwards compatibility check
+ -- create a set of multiple ranges, adding elements in a chained fashion
+ local compatible = ver.set(&quot;1.1&quot;,&quot;1.2&quot;):allowed(&quot;2.1&quot;, &quot;2.5&quot;):disallowed(&quot;2.3&quot;)
+
  assert(compatible:matches(&quot;1.1.3&quot;))
-
- -- adding elements in a chained fashion
- compatible:allowed(&quot;2.1&quot;, &quot;2.5&quot;):disallowed(&quot;2.3&quot;) -- 2.3 was a buggy version...
-
  assert(compatible:matches(&quot;1.1.3&quot;))
  assert(compatible:matches(&quot;2.4&quot;))
  assert(not compatible:matches(&quot;2.0&quot;))
  assert(not compatible:matches(&quot;2.3&quot;))
+
+ -- print a formatted set
+ print(compatible) --&gt; &quot;1.1 to 1.2 and 2.1 to 2.5, but not 2.3&quot;
+
+ -- create an upwards comptibility check, allowing all version 1.x
+ local c = ver.set(&quot;1.0&quot;,&quot;2.0&quot;):disallowed(&quot;2.0&quot;)
+ assert(c:matches(&quot;1.4&quot;))
+ assert(not c:matches(&quot;2.0&quot;))
  </pre>
     </ul>
     <h3>Info:</h3>
@@ -83,7 +93,14 @@
     </ul>
 
 
-<h2><a href="#Functions">Functions</a></h2>
+<h2><a href="#Version">Version </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#version">version (v)</a></td>
+	<td class="summary">Creates a new version object from a string.</td>
+	</tr>
+</table>
+<h2><a href="#Range">Range </a></h2>
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#range">range (v1, v2)</a></td>
@@ -93,8 +110,11 @@
 	<td class="name" nowrap><a href="#range:matches">range:matches (v)</a></td>
 	<td class="summary">Matches a version on a range.</td>
 	</tr>
+</table>
+<h2><a href="#Set">Set </a></h2>
+<table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#set">set ()</a></td>
+	<td class="name" nowrap><a href="#set">set (...)</a></td>
 	<td class="summary">Creates a version set.</td>
 	</tr>
 	<tr>
@@ -109,18 +129,51 @@
 	<td class="name" nowrap><a href="#set:matches">set:matches (v1)</a></td>
 	<td class="summary">Matches a version against the set of allowed and disallowed versions.</td>
 	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#version">version (v)</a></td>
-	<td class="summary">Creates a new version object from a string.</td>
-	</tr>
 </table>
 
 <br/>
 <br/>
 
 
-    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    <h2 class="section-header has-description"><a name="Version"></a>Version </h2>
 
+          <div class="section-description">
+           object representing a single version
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "version"></a>
+    <strong>version (v)</strong>
+    </dt>
+    <dd>
+    Creates a new version object from a string.  The returned table will have
+ comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
+ will be assumed to be "0" on the least significant side of the version string.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v</span>
+         String formatted as numbers separated by dots (no limit on number of elements).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        version object
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Range"></a>Range </h2>
+
+          <div class="section-description">
+           object representing a range of versions
+          </div>
     <dl class="function">
     <dt>
     <a name = "range"></a>
@@ -175,14 +228,27 @@
 
 
 </dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Set"></a>Set </h2>
+
+          <div class="section-description">
+           object representing a set of version ranges
+          </div>
+    <dl class="function">
     <dt>
     <a name = "set"></a>
-    <strong>set ()</strong>
+    <strong>set (...)</strong>
     </dt>
     <dd>
     Creates a version set.  A set contains a number of allowed and disallowed version ranges.
 
 
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+         initial version/range to allow, see <a href="index.html#set:allowed">set:allowed</a> for parameter descriptions
+        </li>
+    </ul>
 
     <h3>Returns:</h3>
     <ol>
@@ -277,33 +343,6 @@
 
 
 </dd>
-    <dt>
-    <a name = "version"></a>
-    <strong>version (v)</strong>
-    </dt>
-    <dd>
-    Creates a new version object from a string.  The returned table will have
- comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
- will be assumed to be "0" on the least significant side of the version string.
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">v</span>
-         String formatted as numbers separated by dots (no limit on number of elements).
-        </li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        version object
-    </ol>
-
-
-
-
-</dd>
 </dl>
 
 
@@ -311,7 +350,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-05-13 18:29:16 </i>
+<i style="float:right;">Last updated 2016-07-27 09:35:13 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
