@@ -1,9 +1,9 @@
 package = "version"
-version = "0.2-1"
+version = "0.3-1"
 
 source = {
-  url = "https://github.com/Mashape/version.lua/archive/v0_2.tar.gz",
-  dir = "version.lua-0_2"
+  url = "https://github.com/Mashape/version.lua/archive/v0_3.tar.gz",
+  dir = "version.lua-0_3"
 }
 
 description = {

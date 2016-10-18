@@ -96,12 +96,27 @@ local mt_version = {
     end,
 }
 
+--- Boolean flag (module wide) indicating parsing rules for version strings.
+-- 
+-- @field strict If `truthy` then the string to parse may only be numbers and dots. If `falsy` (default value) the parser will grab the first 'number and dots' sequence from the string.
+-- @usage local ver = require("version")
+-- 
+-- ver.strict = false              --> default value
+-- print(ver.version("Lua 5.3"))   --> 5.3
+--
+-- ver.strict = true
+-- print(ver.version("Lua 5.3"))   --> error!
+_M.strict = false
+
 --- Creates a new version object from a string. The returned table will have
 -- comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
 -- will be assumed to be "0" on the least significant side of the version string.
 -- @param v String formatted as numbers separated by dots (no limit on number of elements).
 -- @return version object
 _M.version = function(v)
+  if not _M.strict then
+    v = v:match("([%d%.]+)")
+  end
   local t = split(v, "%.")
   for i, s in ipairs(t) do
     local n = tonumber(s)
@@ -257,4 +272,3 @@ _M.set = function(...)
 end
 
 return _M
-

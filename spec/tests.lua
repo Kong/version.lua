@@ -1,6 +1,15 @@
-local version = require("version").version
-local range = require("version").range
-local set = require("version").set
+local v = require("version")
+local version = v.version
+local range = v.range
+local set = v.set
+
+v.strict = false
+local lua = version("Lua 5.3")
+assert(tostring(lua) == "5.3")
+
+v.strict = true
+local success, lua = pcall(version, "Lua 5.3")
+assert(success == false)
 
 v1 = version("0")
 assert(v1[1] == 0)
