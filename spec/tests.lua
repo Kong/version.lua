@@ -59,6 +59,11 @@ assert(r1 == nil)
 assert(err == "FROM version must be less than or equal to the TO version")
 
 r1 = range("1.2", "1.4")
+local r, err = r1:matches("xxx")
+print(r, err)
+assert(r == nil)
+assert(err == "Not a valid version element: 'xxx'")
+
 assert(r1:matches("1.2"))
 assert(r1:matches("1.2.0"))
 assert(r1:matches("1.3"))

@@ -6,19 +6,19 @@
 -- checkout the semantic versioning specification (SemVer).
 --
 -- @usage
--- local ver = require("version")
+-- local version = require("version")
 --
 -- -- create a version and perform some comparisons
--- local v = ver.version("3.1.0")
--- assert( v == ver.version("3.1"))   -- missing elements default to zero, and hence are equal
--- assert( v > ver.version("3.0"))
+-- local v = version("3.1.0")
+-- assert( v == version("3.1"))   -- missing elements default to zero, and hence are equal
+-- assert( v > version("3.0"))
 --
 -- -- create a version range, and check whether a version is within that range
--- local r = ver.range("2.75", "3.50.3")
+-- local r = version.range("2.75", "3.50.3")
 -- assert(r:matches(v))
 --
 -- -- create a set of multiple ranges, adding elements in a chained fashion
--- local compatible = ver.set("1.1","1.2"):allowed("2.1", "2.5"):disallowed("2.3")
+-- local compatible = version.set("1.1","1.2"):allowed("2.1", "2.5"):disallowed("2.3")
 --
 -- assert(compatible:matches("1.1.3"))
 -- assert(compatible:matches("1.1.3"))
@@ -29,8 +29,8 @@
 -- -- print a formatted set
 -- print(compatible) --> "1.1 to 1.2 and 2.1 to 2.5, but not 2.3"
 --
--- -- create an upwards comptibility check, allowing all version 1.x
--- local c = ver.set("1.0","2.0"):disallowed("2.0")
+-- -- create an upwards compatibility check, allowing all versions 1.x
+-- local c = version.set("1.0","2.0"):disallowed("2.0")
 -- assert(c:matches("1.4"))
 -- assert(not c:matches("2.0"))
 -- 
@@ -63,7 +63,6 @@ local function split(str, pat)
 
   return t
 end
-
 
 --- Version.
 -- object representing a single version
@@ -111,8 +110,13 @@ _M.strict = false
 --- Creates a new version object from a string. The returned table will have
 -- comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
 -- will be assumed to be "0" on the least significant side of the version string.
+--
+-- Calling on the module table is a shortcut to `new`.
 -- @param v String formatted as numbers separated by dots (no limit on number of elements).
 -- @return `version` object, or `nil+err`
+-- @usage local v = version.new("0.1")
+-- -- is identical to
+-- local v = version("0.1")
 _M.new = function(v)
   if not _M.strict then
     v = v:match("([%d%.]+)")
@@ -137,10 +141,12 @@ local mt_range = {
       --- Matches a version on a range.
       -- @name range:matches
       -- @param v Version (string or `version` object) to match
-      -- @return `true` when the version matches the range, `false` otherwise
+      -- @return `true` or `false` whether the version matches the range, or `nil+err`
       matches = function(self, v)
         if getmetatable(v) ~= mt_version then 
-          v = _M.new(v)
+          local parsed, err = _M.new(v)
+          if not parsed then return nil, err end
+          v = parsed
         end
         
         return (v >= self.from) and (v <= self.to)
@@ -205,7 +211,7 @@ local mt_set = {
       -- @name set:allowed
       -- @param v1 Version or range, if version, the FROM version in either string or `version` object format
       -- @param v2 Version (optional), TO version in either string or `version` object format
-      -- @return The `set` object, to easy chain multiple allowed/disallowed ranges
+      -- @return The `set` object, to easy chain multiple allowed/disallowed ranges, or `nil+err`
       allowed = function(self, v1, v2)
         local ok, err = insertr(self.ok, v1, v2)
         if not ok then return nil, err end
@@ -215,7 +221,7 @@ local mt_set = {
       -- @name set:disallowed
       -- @param v1 Version or range, if version, the FROM version in either string or `version` object format
       -- @param v2 Version (optional), TO version in either string or `version` object format
-      -- @return The `set` object, to easy chain multiple allowed/disallowed ranges
+      -- @return The `set` object, to easy chain multiple allowed/disallowed ranges, or `nil+err`
       disallowed = function(self,v1, v2)
         local ok, err = insertr(self.nok, v1, v2)
         if not ok then return nil, err end
@@ -227,7 +233,7 @@ local mt_set = {
       -- but also the dis-allowed set, will return `false`.
       -- @name set:matches
       -- @param v1 Version to match (either string or `version` object).
-      -- @return `true` if the version matches the set, or `false` otherwise
+      -- @return `true` or `false` whether the version matches the set, or `nil+err`
       matches = function(self, v)
         if getmetatable(v) ~= mt_version then
           local parsed, err = _M.new(v)
@@ -283,7 +289,7 @@ local mt_set = {
 
 --- Creates a version set. A set contains a number of allowed and disallowed version ranges.
 -- @param ... initial version/range to allow, see `set:allowed` for parameter descriptions
--- @return a `set` object, with `ok` and `nok` lists and a `set:matches` method 
+-- @return a `set` object, with `ok` and `nok` lists and a `set:matches` method, or `nil+err`
 _M.set = function(...)
   return setmetatable({
     ok = {},

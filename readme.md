@@ -23,6 +23,7 @@ Tests are in the `spec` folder.
 History
 =======
 
+- 1.0   xx-Oct-2017     many breaking changes, renamed methods, and updated 'strict'
 - 0.3   18-Oct-2016     Relaxed parsing rules, added the `strict` flag
 - 0.2   14-May-2016     Added 'tostring' meta-methods, and a required initial version for 'set'
 - 0.1   13-May-2016     Initial version
