@@ -1,24 +1,23 @@
-local v = require("version")
-local version = v.version
-local range = v.range
-local set = v.set
+local version = require("version")
+local range = version.range
+local set = version.set
 
-v.strict = false
-local lua = version("Lua 5.3")
+version.strict = false
+local lua, err = version("Lua 5.3")
 assert(tostring(lua) == "5.3")
 
-v.strict = true
-local lua, err = version("Lua 5.3")
+version.strict = true
+lua, err = version("Lua 5.3")
 print(lua, err)
 assert(lua == nil)
 assert(err == "Not a valid version element: 'Lua 5.3'")
 
-v1 = version("0")
+local v1 = version("0")
 assert(v1[1] == 0)
 assert(v1[2] == nil)
 assert(tostring(v1) == "0") 
 
-v2 = version("3.4.8.10022")
+local v2 = version("3.4.8.10022")
 assert(v2[1] == 3)
 assert(v2[2] == 4)
 assert(v2[3] == 8)
@@ -26,12 +25,12 @@ assert(v2[4] == 10022)
 assert(v2[5] == nil)
 assert(tostring(v2) == "3.4.8.10022") 
 
-v3 = version("1.2")
+local v3 = version("1.2")
 assert(v3[1] == 1)
 assert(v3[2] == 2)
 assert(v3[3] == nil)
 
-v4 = version("1.2.0")
+local v4 = version("1.2.0")
 assert(v4[1] == 1)
 assert(v4[2] == 2)
 assert(v4[3] == 0)
@@ -44,7 +43,7 @@ assert(v4 == v3)
 
 assert(version("0.4") < version("4.0"))
 
-r1, err = range("1.2", "xxx")
+local r1, err = range("1.2", "xxx")
 print(r1, err)
 assert(r1 == nil)
 assert(err == "Not a valid version element: 'xxx'")
@@ -71,7 +70,7 @@ assert(not r1:matches("1.5"))
 assert(not r1:matches("0.5"))
 assert(tostring(r1) == "1.2 to 1.4") 
 
-s1, err = set("xxx")
+local s1, err = set("xxx")
 print(s1, err)
 assert(s1 == nil)
 assert(err == "Not a valid version element: 'xxx'")
@@ -107,12 +106,12 @@ assert(not s1:matches("1.4"))
 assert(not s1:matches("3.6"))
 assert(tostring(s1) == "1.2.0 to 2.4.3, 3.5 to 3.9.9 and 5.0, but not 1.3 to 1.4 and 3.6") 
 
-s2 = set("1.2.0")
+local s2 = set("1.2.0")
 assert(tostring(s2) == "1.2.0")
 s2:disallowed("9.9")
 assert(tostring(s2) == "1.2.0, but not 9.9")
 
-s3 = set("1.2.0", "2.4.3")
+local s3 = set("1.2.0", "2.4.3")
 assert(tostring(s3) == "1.2.0 to 2.4.3")
 
 print ("All tests successful")

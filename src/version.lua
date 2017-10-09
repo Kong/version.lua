@@ -113,7 +113,7 @@ _M.strict = false
 -- will be assumed to be "0" on the least significant side of the version string.
 -- @param v String formatted as numbers separated by dots (no limit on number of elements).
 -- @return `version` object, or `nil+err`
-_M.version = function(v)
+_M.new = function(v)
   if not _M.strict then
     v = v:match("([%d%.]+)")
   end
@@ -140,7 +140,7 @@ local mt_range = {
       -- @return `true` when the version matches the range, `false` otherwise
       matches = function(self, v)
         if getmetatable(v) ~= mt_version then 
-          v = _M.version(v)
+          v = _M.new(v)
         end
         
         return (v >= self.from) and (v <= self.to)
@@ -166,11 +166,11 @@ _M.range = function(v1,v2)
   v1 = v1 or "0"
   v2 = v2 or v1
   if getmetatable(v1) ~= mt_version then
-    v1, err = _M.version(v1)
+    v1, err = _M.new(v1)
     if not v1 then return nil, err end
   end
   if getmetatable(v2) ~= mt_version then
-    v2, err = _M.version(v2)
+    v2, err = _M.new(v2)
     if not v2 then return nil, err end
   end
   if v1 > v2 then
@@ -230,7 +230,7 @@ local mt_set = {
       -- @return `true` if the version matches the set, or `false` otherwise
       matches = function(self, v)
         if getmetatable(v) ~= mt_version then
-          local parsed, err = _M.version(v)
+          local parsed, err = _M.new(v)
           if not parsed then return nil, err end
           v = parsed
         end
@@ -291,4 +291,8 @@ _M.set = function(...)
   }, mt_set):allowed(...)
 end
 
-return _M
+return setmetatable(_M, {
+    __call = function(self, ...)
+      return self.new(...)
+    end
+  })
