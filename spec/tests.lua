@@ -8,8 +8,10 @@ local lua = version("Lua 5.3")
 assert(tostring(lua) == "5.3")
 
 v.strict = true
-local success, lua = pcall(version, "Lua 5.3")
-assert(success == false)
+local lua, err = version("Lua 5.3")
+print(lua, err)
+assert(lua == nil)
+assert(err == "Not a valid version element: 'Lua 5.3'")
 
 v1 = version("0")
 assert(v1[1] == 0)
@@ -42,6 +44,21 @@ assert(v4 == v3)
 
 assert(version("0.4") < version("4.0"))
 
+r1, err = range("1.2", "xxx")
+print(r1, err)
+assert(r1 == nil)
+assert(err == "Not a valid version element: 'xxx'")
+
+r1, err = range("xxx", "1.2")
+print(r1, err)
+assert(r1 == nil)
+assert(err == "Not a valid version element: 'xxx'")
+
+r1, err = range("1.4", "1.2")
+print(r1, err)
+assert(r1 == nil)
+assert(err == "FROM version must be less than or equal to the TO version")
+
 r1 = range("1.2", "1.4")
 assert(r1:matches("1.2"))
 assert(r1:matches("1.2.0"))
@@ -54,7 +71,27 @@ assert(not r1:matches("1.5"))
 assert(not r1:matches("0.5"))
 assert(tostring(r1) == "1.2 to 1.4") 
 
+s1, err = set("xxx")
+print(s1, err)
+assert(s1 == nil)
+assert(err == "Not a valid version element: 'xxx'")
+
+s1, err = set(range("xxx"))
+print(s1, err)
+assert(s1 == nil)
+assert(err == "Not a valid version element: 'Not a valid version element: 'xxx''")
+
+s1, err = set(range("1.2", "xxx"))
+print(s1, err)
+assert(s1 == nil)
+assert(err == "Not a valid version element: 'Not a valid version element: 'xxx''")
+
 s1 = set("1.2.0", "2.4.3"):allowed("3.5", "3.9.9"):allowed("5.0"):disallowed("1.3", "1.4"):disallowed("3.6")
+local ok, err = s1:matches("0.x")
+print(ok, err)
+assert(ok == nil)
+assert(err == "Not a valid version element: '0.x'")
+
 assert(not s1:matches("0.1"))
 assert(s1:matches("1.2.0"))
 assert(s1:matches("2"))

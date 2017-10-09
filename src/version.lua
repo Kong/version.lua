@@ -112,7 +112,7 @@ _M.strict = false
 -- comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
 -- will be assumed to be "0" on the least significant side of the version string.
 -- @param v String formatted as numbers separated by dots (no limit on number of elements).
--- @return version object
+-- @return `version` object, or `nil+err`
 _M.version = function(v)
   if not _M.strict then
     v = v:match("([%d%.]+)")
@@ -120,7 +120,9 @@ _M.version = function(v)
   local t = split(v, "%.")
   for i, s in ipairs(t) do
     local n = tonumber(s)
-    assert(n, "Not a valid version element; "..tostring(s))
+    if not n then
+      return nil, "Not a valid version element: '"..tostring(v).."'"
+    end
     t[i] = n
   end
   return setmetatable(t, mt_version)
@@ -157,14 +159,23 @@ local mt_range = {
 --- Creates a version range. 
 -- @param v1 The FROM version of the range (string or `version` object). If `nil`, assumed to be 0.
 -- @param v2 (optional) The TO version of the range (string or `version` object). If omitted it will default to `v1`.
--- @return range object with `from` and `to` fields and `set:matches` method.
+-- @return range object with `from` and `to` fields and `set:matches` method, or `nil+err`.
 _M.range = function(v1,v2)
+  local err
   assert (v1 or v2, "At least one parameter is required")
   v1 = v1 or "0"
   v2 = v2 or v1
-  if getmetatable(v1) ~= mt_version then v1 = _M.version(v1) end
-  if getmetatable(v2) ~= mt_version then v2 = _M.version(v2) end
-  assert(v1 <= v2, "FROM version must be less than or equal to the TO version, to be a proper range")
+  if getmetatable(v1) ~= mt_version then
+    v1, err = _M.version(v1)
+    if not v1 then return nil, err end
+  end
+  if getmetatable(v2) ~= mt_version then
+    v2, err = _M.version(v2)
+    if not v2 then return nil, err end
+  end
+  if v1 > v2 then
+    return nil, "FROM version must be less than or equal to the TO version"
+  end
   
   return setmetatable({
     from = v1,
@@ -181,8 +192,11 @@ local insertr = function(t, v1, v2)
     assert (v2 == nil, "First parameter was a range, second must be nil.")
     table.insert(t, v1)
   else
-    table.insert(t, _M.range(v1, v2))
+    local r, err = _M.range(v1, v2)
+    if not r then return nil, err end
+    table.insert(t, r)
   end
+  return true
 end
 
 local mt_set = {
@@ -193,7 +207,8 @@ local mt_set = {
       -- @param v2 Version (optional), TO version in either string or `version` object format
       -- @return The `set` object, to easy chain multiple allowed/disallowed ranges
       allowed = function(self, v1, v2)
-        insertr(self.ok, v1, v2)
+        local ok, err = insertr(self.ok, v1, v2)
+        if not ok then return nil, err end
         return self
       end,
       --- Adds a DISALLOWED range to the set.
@@ -202,7 +217,8 @@ local mt_set = {
       -- @param v2 Version (optional), TO version in either string or `version` object format
       -- @return The `set` object, to easy chain multiple allowed/disallowed ranges
       disallowed = function(self,v1, v2)
-        insertr(self.nok, v1, v2)
+        local ok, err = insertr(self.nok, v1, v2)
+        if not ok then return nil, err end
         return self
       end,
       
@@ -213,7 +229,11 @@ local mt_set = {
       -- @param v1 Version to match (either string or `version` object).
       -- @return `true` if the version matches the set, or `false` otherwise
       matches = function(self, v)
-        if getmetatable(v) ~= mt_version then v = _M.version(v) end
+        if getmetatable(v) ~= mt_version then
+          local parsed, err = _M.version(v)
+          if not parsed then return nil, err end
+          v = parsed
+        end
         
         local success
         for _, range in pairs(self.ok) do
