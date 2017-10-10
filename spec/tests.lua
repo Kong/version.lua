@@ -2,15 +2,31 @@ local version = require("version")
 local range = version.range
 local set = version.set
 
-version.strict = false
 local lua, err = version("Lua 5.3")
 assert(tostring(lua) == "5.3")
 
-version.strict = true
-lua, err = version("Lua 5.3")
+lua, err = version.strict("Lua 5.3")
 print(lua, err)
 assert(lua == nil)
 assert(err == "Not a valid version element: 'Lua 5.3'")
+
+assert(tostring(version("1.0")) == "1.0")
+assert(tostring(version("text 1.0")) == "1.0")
+assert(tostring(version("1.0 text")) == "1.0")
+assert(tostring(version("1.0 text 2.0")) == "1.0")
+assert(tostring(version("1.")) == "1")
+assert(tostring(version("1..2")) == "nil")
+assert(tostring(version("1.x")) == "1")
+assert(tostring(version("x.1")) == "1")
+
+assert(tostring(version.strict("1.0")) == "1.0")
+assert(tostring(version.strict("text 1.0")) == "nil")
+assert(tostring(version.strict("1.0 text")) == "nil")
+assert(tostring(version.strict("1.0 text 2.0")) == "nil")
+assert(tostring(version.strict("1.")) == "nil")
+assert(tostring(version.strict("1..2")) == "nil")
+assert(tostring(version.strict("1.x")) == "nil")
+assert(tostring(version.strict("x.1")) == "nil")
 
 local v1 = version("0")
 assert(v1[1] == 0)
@@ -91,10 +107,10 @@ assert(s1 == nil)
 assert(err == "Not a valid version element: 'Not a valid version element: 'xxx''")
 
 s1 = set("1.2.0", "2.4.3"):allowed("3.5", "3.9.9"):allowed("5.0"):disallowed("1.3", "1.4"):disallowed("3.6")
-local ok, err = s1:matches("0.x")
+local ok, err = s1:matches("xxx")
 print(ok, err)
 assert(ok == nil)
-assert(err == "Not a valid version element: '0.x'")
+assert(err == "Not a valid version element: 'xxx'")
 
 assert(not s1:matches("0.1"))
 assert(s1:matches("1.2.0"))
