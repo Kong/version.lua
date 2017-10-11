@@ -29,18 +29,16 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Version">Version </a></li>
-<li><a href="#Range">Range </a></li>
-<li><a href="#Set">Set </a></li>
+<li><a href="#Functions">Functions</a></li>
 </ul>
 
 
 <h2>Modules</h2>
-<ul class="$(kind=='Topics' and '' or 'nowrap'">
+<ul class="nowrap">
   <li><strong>version</strong></li>
 </ul>
 <h2>Topics</h2>
-<ul class="$(kind=='Topics' and '' or 'nowrap'">
+<ul class="">
   <li><a href="topics/readme.md.html">readme</a></li>
 </ul>
 
@@ -50,40 +48,38 @@
 
 <h1>Module <code>version</code></h1>
 <p>Version comparison library for Lua.</p>
-<p> Comparison is simple and straightforward, no interpretation is done whatsoever
- regarding compatibility etc. If that&rsquo;s what you're looking for, then please
- checkout the semantic versioning specification (SemVer).</p>
+<p> Comparison is simple and straightforward, with basic support for SemVer.</p>
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">
- local ver = require(&quot;version&quot;)
+        <pre class="example">local version = require(&quot;version&quot;)
 
- -- create a version and perform some comparisons
- local v = ver.version(&quot;3.1.0&quot;)
- assert( v == ver.version(&quot;3.1&quot;))   -- missing elements default to zero, and hence are equal
- assert( v &gt; ver.version(&quot;3.0&quot;))
+-- create a version and perform some comparisons
+local v = version(&quot;3.1.0&quot;)
+assert( v == version(&quot;3.1&quot;))   -- missing elements default to zero, and hence are equal
+assert( v &gt; version(&quot;3.0&quot;))
 
- -- create a version range, and check whether a version is within that range
- local r = ver.range(&quot;2.75&quot;, &quot;3.50.3&quot;)
- assert(r:matches(v))
+-- create a version range, and check whether a version is within that range
+local r = version.range(&quot;2.75&quot;, &quot;3.50.3&quot;)
+assert(r:matches(v))
 
- -- create a set of multiple ranges, adding elements in a chained fashion
- local compatible = ver.set(&quot;1.1&quot;,&quot;1.2&quot;):allowed(&quot;2.1&quot;, &quot;2.5&quot;):disallowed(&quot;2.3&quot;)
+-- create a set of multiple ranges, adding elements in a chained fashion
+local compatible = version.set(&quot;1.1&quot;,&quot;1.2&quot;):allowed(&quot;2.1&quot;, &quot;2.5&quot;):disallowed(&quot;2.3&quot;)
 
- assert(compatible:matches(&quot;1.1.3&quot;))
- assert(compatible:matches(&quot;1.1.3&quot;))
- assert(compatible:matches(&quot;2.4&quot;))
- assert(not compatible:matches(&quot;2.0&quot;))
- assert(not compatible:matches(&quot;2.3&quot;))
+assert(compatible:matches(&quot;1.1.3&quot;))
+assert(compatible:matches(&quot;1.1.3&quot;))
+assert(compatible:matches(&quot;2.4&quot;))
+assert(not compatible:matches(&quot;2.0&quot;))
+assert(not compatible:matches(&quot;2.3&quot;))
 
- -- print a formatted set
- print(compatible) --&gt; &quot;1.1 to 1.2 and 2.1 to 2.5, but not 2.3&quot;
+-- print a formatted set
+print(compatible) --&gt; &quot;1.1 to 1.2 and 2.1 to 2.5, but not 2.3&quot;
 
- -- create an upwards comptibility check, allowing all version 1.x
- local c = ver.set(&quot;1.0&quot;,&quot;2.0&quot;):disallowed(&quot;2.0&quot;)
- assert(c:matches(&quot;1.4&quot;))
- assert(not c:matches(&quot;2.0&quot;))
- </pre>
+-- create an upwards compatibility check, allowing all versions 1.x
+local c = version.set(&quot;1.0&quot;,&quot;2.0&quot;):disallowed(&quot;2.0&quot;)
+assert(c:matches(&quot;1.4&quot;))
+assert(not c:matches(&quot;2.0&quot;))
+
+</pre>
     </ul>
     <h3>Info:</h3>
     <ul>
@@ -93,19 +89,12 @@
     </ul>
 
 
-<h2><a href="#Version">Version </a></h2>
+<h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#strict">strict</a></td>
-	<td class="summary">Boolean flag (module wide) indicating parsing rules for version strings.</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#version">version (v)</a></td>
+	<td class="name" nowrap><a href="#new">new (v)</a></td>
 	<td class="summary">Creates a new version object from a string.</td>
 	</tr>
-</table>
-<h2><a href="#Range">Range </a></h2>
-<table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#range">range (v1, v2)</a></td>
 	<td class="summary">Creates a version range.</td>
@@ -114,11 +103,13 @@
 	<td class="name" nowrap><a href="#range:matches">range:matches (v)</a></td>
 	<td class="summary">Matches a version on a range.</td>
 	</tr>
-</table>
-<h2><a href="#Set">Set </a></h2>
-<table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#set">set (...)</a></td>
+	<td class="name" nowrap><a href="#range:semver">range:semver (v)</a></td>
+	<td class="summary">Matches a provider-version on a consumer-version based on the
+ semantic versioning specification.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set">set (v1, v2)</a></td>
 	<td class="summary">Creates a version set.</td>
 	</tr>
 	<tr>
@@ -139,49 +130,20 @@
 <br/>
 
 
-    <h2 class="section-header has-description"><a name="Version"></a>Version </h2>
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
 
-          <div class="section-description">
-           object representing a single version
-          </div>
     <dl class="function">
     <dt>
-    <a name = "strict"></a>
-    <strong>strict</strong>
+    <a name = "new"></a>
+    <strong>new (v)</strong>
     </dt>
     <dd>
-    Boolean flag (module wide) indicating parsing rules for version strings.
-
-
-    <ul>
-        <li><span class="parameter">strict</span>
-         If <code>truthy</code> then the string to parse may only be numbers and dots. If <code>falsy</code> (default value) the parser will grab the first &lsquo;number and dots&rsquo; sequence from the string.
-        </li>
-    </ul>
-
-
-
-
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"> <span class="keyword">local</span> ver = <span class="global">require</span>(<span class="string">"version"</span>)
-
- ver.strict = <span class="keyword">false</span>              <span class="comment">--&gt; default value
-</span> <span class="global">print</span>(ver.version(<span class="string">"Lua 5.3"</span>))   <span class="comment">--&gt; 5.3
-</span>
- ver.strict = <span class="keyword">true</span>
- <span class="global">print</span>(ver.version(<span class="string">"Lua 5.3"</span>))   --&gt; error!</pre>
-    </ul>
-
-</dd>
-    <dt>
-    <a name = "version"></a>
-    <strong>version (v)</strong>
-    </dt>
-    <dd>
-    Creates a new version object from a string.  The returned table will have
+    Creates a new version object from a string.
+ The returned table will have
  comparison operators, eg. LT, EQ, GT. For all comparisons, any missing numbers
- will be assumed to be &ldquo;0&rdquo; on the least significant side of the version string.
+ will be assumed to be "0" on the least significant side of the version string.</p>
+
+<p> Calling on the module table is a shortcut to <a href="index.html#new">new</a>.
 
 
     <h3>Parameters:</h3>
@@ -194,26 +156,29 @@
     <h3>Returns:</h3>
     <ol>
 
-        version object
+        <a href="index.html#">version</a> object, or <code>nil+err</code>
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> v = version.new(<span class="string">"0.1"</span>)
+<span class="comment">-- is identical to
+</span><span class="keyword">local</span> v = version(<span class="string">"0.1"</span>)
+
+<span class="global">print</span>(v)     <span class="comment">--&gt; "0.1"
+</span><span class="global">print</span>(v[<span class="number">1</span>])  <span class="comment">--&gt; 0
+</span><span class="global">print</span>(v[<span class="number">2</span>])  <span class="comment">--&gt; 1</span></pre>
+    </ul>
 
 </dd>
-</dl>
-    <h2 class="section-header has-description"><a name="Range"></a>Range </h2>
-
-          <div class="section-description">
-           object representing a range of versions
-          </div>
-    <dl class="function">
     <dt>
     <a name = "range"></a>
     <strong>range (v1, v2)</strong>
     </dt>
     <dd>
-    Creates a version range.
+    Creates a version range.   A <a href="index.html#range">range</a> object represents a range of versions.
 
 
     <h3>Parameters:</h3>
@@ -229,11 +194,19 @@
     <h3>Returns:</h3>
     <ol>
 
-        range object with <code>from</code> and <code>to</code> fields and <a href="index.html#set:matches">set:matches</a> method.
+        range object with <code>from</code> and <code>to</code> fields and <a href="index.html#set:matches">set:matches</a> method, or <code>nil+err</code>.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> r = version.range(<span class="string">"0.1"</span>,<span class="string">" 2.4"</span>)
+
+<span class="global">print</span>(v.from)     <span class="comment">--&gt; "0.1"
+</span><span class="global">print</span>(v.to[<span class="number">1</span>])    <span class="comment">--&gt; 2
+</span><span class="global">print</span>(v.to[<span class="number">2</span>])    <span class="comment">--&gt; 4</span></pre>
+    </ul>
 
 </dd>
     <dt>
@@ -254,31 +227,63 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> when the version matches the range, <code>false</code> otherwise
+        <code>true</code> or <code>false</code> whether the version matches the range, or <code>nil+err</code>
     </ol>
 
 
 
 
 </dd>
-</dl>
-    <h2 class="section-header has-description"><a name="Set"></a>Set </h2>
-
-          <div class="section-description">
-           object representing a set of version ranges
-          </div>
-    <dl class="function">
     <dt>
-    <a name = "set"></a>
-    <strong>set (...)</strong>
+    <a name = "range:semver"></a>
+    <strong>range:semver (v)</strong>
     </dt>
     <dd>
-    Creates a version set.  A set contains a number of allowed and disallowed version ranges.
+    Matches a provider-version on a consumer-version based on the
+ semantic versioning specification.
+ The implementation does not support pre-release and/or build metadata,
+ only the major, minor, and patch levels are compared.
 
 
     <h3>Parameters:</h3>
     <ul>
-        <li><span class="parameter">...</span>
+        <li><span class="parameter">v</span>
+         Version (string or <a href="index.html#">version</a> object) as served by the provider
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> or <code>false</code> whether the version matches, or <code>nil+err</code>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> consumer = <span class="string">"1.2"</span>     <span class="comment">-- consumer requested version
+</span><span class="keyword">local</span> provider = <span class="string">"1.5.2"</span>   <span class="comment">-- provider served version
+</span>
+<span class="keyword">local</span> compatible = version(consumer):semver(provider)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "set"></a>
+    <strong>set (v1, v2)</strong>
+    </dt>
+    <dd>
+    Creates a version set.
+ A <a href="index.html#set">set</a> is an object that contains a number of allowed and disallowed version <a href="index.html#range">range</a> objects.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">v1</span>
+         initial version/range to allow, see <a href="index.html#set:allowed">set:allowed</a> for parameter descriptions
+        </li>
+        <li><span class="parameter">v2</span>
          initial version/range to allow, see <a href="index.html#set:allowed">set:allowed</a> for parameter descriptions
         </li>
     </ul>
@@ -286,7 +291,7 @@
     <h3>Returns:</h3>
     <ol>
 
-        a <a href="index.html#set">set</a> object, with <code>ok</code> and <code>nok</code> lists and a <a href="index.html#set:matches">set:matches</a> method
+        a <a href="index.html#set">set</a> object, with <code>ok</code> and <code>nok</code> lists and a <a href="index.html#set:matches">set:matches</a> method, or <code>nil+err</code>
     </ol>
 
 
@@ -314,7 +319,7 @@
     <h3>Returns:</h3>
     <ol>
 
-        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges
+        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges, or <code>nil+err</code>
     </ol>
 
 
@@ -342,7 +347,7 @@
     <h3>Returns:</h3>
     <ol>
 
-        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges
+        The <a href="index.html#set">set</a> object, to easy chain multiple allowed/disallowed ranges, or <code>nil+err</code>
     </ol>
 
 
@@ -354,9 +359,10 @@
     <strong>set:matches (v1)</strong>
     </dt>
     <dd>
-    Matches a version against the set of allowed and disallowed versions.
- NOTE: disallowed has a higher precedence, so a version that matches the allowed-set,
- but also the dis-allowed set, will return <code>false</code>.
+    Matches a version against the set of allowed and disallowed versions. </p>
+
+<p> NOTE: <a href="index.html#set:disallowed">disallowed</a> has a higher precedence, so a version that matches the <a href="index.html#set:allowed">allowed</a> set,
+ but also the <a href="index.html#set:disallowed">disallowed</a> set, will return <code>false</code>.
 
 
     <h3>Parameters:</h3>
@@ -369,7 +375,7 @@
     <h3>Returns:</h3>
     <ol>
 
-        <code>true</code> if the version matches the set, or <code>false</code> otherwise
+        <code>true</code> or <code>false</code> whether the version matches the set, or <code>nil+err</code>
     </ol>
 
 
@@ -382,8 +388,8 @@
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
-<i style="float:right;">Last updated 2016-10-18 16:46:24 </i>
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2017-10-14 00:03:28 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

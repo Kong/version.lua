@@ -2,6 +2,9 @@ local version = require("version")
 local range = version.range
 local set = version.set
 
+------------------------------------------
+-- strict and relaxed parsing
+------------------------------------------
 local lua, err = version("Lua 5.3")
 assert(tostring(lua) == "5.3")
 
@@ -10,6 +13,9 @@ print(lua, err)
 assert(lua == nil)
 assert(err == "Not a valid version element: 'Lua 5.3'")
 
+------------------------------------------
+-- Version object
+------------------------------------------
 assert(tostring(version("1.0")) == "1.0")
 assert(tostring(version("text 1.0")) == "1.0")
 assert(tostring(version("1.0 text")) == "1.0")
@@ -59,6 +65,30 @@ assert(v4 == v3)
 
 assert(version("0.4") < version("4.0"))
 
+local sv1 = version("1.2.0.3")  -- too many elements
+local ok, err = sv1:semver("1.2.2")
+print(ok, err)
+assert(not ok)
+assert(err == "Version has too many elements (semver max 3)")
+
+local sv2 = version("0.2.0")    -- major == 0
+assert(sv2:semver("0.2.0"))
+assert(not sv2:semver("0.2.1"))
+
+local sv3 = version("1.2.3")
+assert(not sv3:semver("0.2.3"))
+assert(not sv3:semver("1.1.3"))
+assert(not sv3:semver("1.2.2"))
+assert(sv3:semver("1.2.3"))
+assert(sv3:semver("1.2.4"))
+assert(sv3:semver("1.3.3"))
+assert(sv3:semver("1.99999"))
+assert(not sv3:semver("2"))
+
+
+------------------------------------------
+-- Range object
+------------------------------------------
 local r1, err = range("1.2", "xxx")
 print(r1, err)
 assert(r1 == nil)
@@ -74,7 +104,7 @@ print(r1, err)
 assert(r1 == nil)
 assert(err == "FROM version must be less than or equal to the TO version")
 
-r1 = range("1.2", "1.4")
+r1 = range("1.2", "1.4.0")
 local r, err = r1:matches("xxx")
 print(r, err)
 assert(r == nil)
@@ -89,8 +119,11 @@ assert(not r1:matches("1.4.1"))
 assert(not r1:matches("0.4.0"))
 assert(not r1:matches("1.5"))
 assert(not r1:matches("0.5"))
-assert(tostring(r1) == "1.2 to 1.4") 
+assert(tostring(r1) == "1.2 to 1.4.0") 
 
+------------------------------------------
+-- Set object
+------------------------------------------
 local s1, err = set("xxx")
 print(s1, err)
 assert(s1 == nil)
@@ -134,5 +167,7 @@ assert(tostring(s2) == "1.2.0, but not 9.9")
 
 local s3 = set("1.2.0", "2.4.3")
 assert(tostring(s3) == "1.2.0 to 2.4.3")
+
+
 
 print ("All tests successful")

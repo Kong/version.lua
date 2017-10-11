@@ -1,9 +1,9 @@
 package = "version"
-version = "0.3-1"
+version = "1.0-1"
 
 source = {
-  url = "https://github.com/Mashape/version.lua/archive/v0_3.tar.gz",
-  dir = "version.lua-0_3"
+  url = "https://github.com/Mashape/version.lua/archive/v1_0.tar.gz",
+  dir = "version.lua-1_0"
 }
 
 description = {
@@ -13,7 +13,7 @@ description = {
       as individual versions, against ranges, or in sets with multiple
       allowed and disallowed ranges/versions.
    ]],
-   license = "MIT/X11",
+   license = "Apache 2.0",
    homepage = "https://github.com/Mashape/version.lua"
 }
 dependencies = {
