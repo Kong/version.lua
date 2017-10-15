@@ -31,8 +31,18 @@
 -- local c = version.set("1.0","2.0"):disallowed("2.0")
 -- assert(c:matches("1.4"))
 -- assert(not c:matches("2.0"))
--- 
--- @copyright Mashape Inc.
+--
+-- -- default parsing
+-- print(version("5.2"))                    -- "5.2"
+-- print(version("Lua 5.2 for me"))         -- "5.2"
+-- print(version("5..2"))                   -- nil, "Not a valid version element: '5..2'"
+--
+-- -- strict parsing
+-- print(version.strict("5.2"))             -- "5.2"
+-- print(version.strict("Lua 5.2 for me"))  -- nil, "Not a valid version element: 'Lua 5.2 for me'"
+-- print(version.strict("5..2"))            -- nil, "Not a valid version element: '5..2'"
+--
+-- @copyright Kong Inc.
 -- @author Thijs Schreijer
 -- @license Apache 2.0
 
@@ -354,19 +364,12 @@ local make_module = function(strict)
   })
 end
 
+local _M = make_module(false)
 --- Similar module, but with stricter parsing rules. 
 -- `version.strict` is identical to the `version` module itself, but it requires
 -- exact version strings, where as the regular parser will simply grab the
 -- first sequence of numbers and dots from the string.
--- @field strict
--- print(version("5.2"))                    -- "5.2"
--- print(version("Lua 5.2 for me"))         -- "5.2"
--- print(version("5..2"))                   -- nil, "Not a valid version element: '5..1'"
---
--- print(version.strict("5.2"))             -- "5.2"
--- print(version.strict("Lua 5.2 for me"))  -- nil, "Not a valid version element: '5..1'"
--- print(version.strict("5..2"))            -- nil, "Not a valid version element: '5..1'"
-local _M = make_module(false)
+-- @field strict same module, but for stricter parsing.
 _M.strict = make_module(true)
 
 return _M

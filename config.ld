@@ -9,5 +9,5 @@ sort=true
 sort_modules=true
 not_luadoc=true
 all=false
-
+style='./docs/'
 
