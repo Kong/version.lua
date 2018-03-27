@@ -1,6 +1,6 @@
 ---
 -- Version comparison library for Lua.
--- 
+--
 -- Comparison is simple and straightforward, with basic support for SemVer.
 --
 -- @usage
@@ -81,12 +81,12 @@ mt_version = {
       -- semantic versioning specification.
       -- The implementation does not support pre-release and/or build metadata,
       -- only the major, minor, and patch levels are compared.
-      -- @function range:semver
+      -- @function ver:semver
       -- @param v Version (string or `version` object) as served by the provider
       -- @return `true` or `false` whether the version matches, or `nil+err`
       -- @usage local consumer = "1.2"     -- consumer requested version
       -- local provider = "1.5.2"   -- provider served version
-      -- 
+      --
       -- local compatible = version(consumer):semver(provider)
       semver = function(self, v)
         -- this function will be called once (in the meta table), it will set
@@ -94,7 +94,7 @@ mt_version = {
         if self[1] == 0 then
           -- major 0 is only compatible when equal
           self.semver = function(self, v2)
-            if getmetatable(v2) ~= mt_version then 
+            if getmetatable(v2) ~= mt_version then
               local parsed, err = _new(v2, self.strict)
               if not parsed then return nil, err end
               v2 = parsed
@@ -118,8 +118,8 @@ mt_version = {
     __eq = function(a,b)
       local l = math.max(#a, #b)
       for i = 1, l do
-        if (a[i] or 0) ~= (b[i] or 0) then 
-          return false 
+        if (a[i] or 0) ~= (b[i] or 0) then
+          return false
         end
       end
       return true
@@ -127,11 +127,11 @@ mt_version = {
     __lt = function(a,b)
       local l = math.max(#a, #b)
       for i = 1, l do
-        if (a[i] or 0) < (b[i] or 0) then 
-          return true 
+        if (a[i] or 0) < (b[i] or 0) then
+          return true
         end
-        if (a[i] or 0) > (b[i] or 0) then 
-          return false 
+        if (a[i] or 0) > (b[i] or 0) then
+          return false
         end
       end
       return false
@@ -148,19 +148,19 @@ local mt_range = {
       -- @param v Version (string or `version` object) to match
       -- @return `true` or `false` whether the version matches the range, or `nil+err`
       matches = function(self, v)
-        if getmetatable(v) ~= mt_version then 
+        if getmetatable(v) ~= mt_version then
           local parsed, err = _new(v, self.strict)
           if not parsed then return nil, err end
           v = parsed
         end
-        
+
         return (v >= self.from) and (v <= self.to)
       end,
     },
     __tostring = function(self)
       local f, t = tostring(self.from), tostring(self.to)
-      if f == t then 
-        return f 
+      if f == t then
+        return f
       else
         return f .. " to " .. t
       end
@@ -201,7 +201,7 @@ local mt_set = {
         end
         return self
       end,
-      
+
       --- Matches a version against the set of allowed and disallowed versions.
       --
       -- NOTE: `disallowed` has a higher precedence, so a version that matches the `allowed` set,
@@ -215,20 +215,20 @@ local mt_set = {
           if not parsed then return nil, err end
           v = parsed
         end
-        
+
         local success
         for _, range in pairs(self.ok) do
-          if range:matches(v) then 
+          if range:matches(v) then
             success = true
-            break 
+            break
           end
         end
-        if not success then 
+        if not success then
           return false
         end
         for _, range in pairs(self.nok) do
-          if range:matches(v) then 
-            return false 
+          if range:matches(v) then
+            return false
           end
         end
         return true
@@ -269,7 +269,7 @@ _new = function(v, strict)
     -- edge case: do not allow trailing dot
     if v:sub(-1,-1) == "." then
       return nil, "Not a valid version element: '"..tostring(v).."'"
-    end 
+    end
   else
     m = v:match("(%d[%d%.]*)")
     if not m then
@@ -305,7 +305,7 @@ _range = function(v1,v2, strict)
   if v1 > v2 then
     return nil, "FROM version must be less than or equal to the TO version"
   end
-  
+
   return setmetatable({
     from = v1,
     to = v2,
@@ -365,7 +365,7 @@ local make_module = function(strict)
 end
 
 local _M = make_module(false)
---- Similar module, but with stricter parsing rules. 
+--- Similar module, but with stricter parsing rules.
 -- `version.strict` is identical to the `version` module itself, but it requires
 -- exact version strings, where as the regular parser will simply grab the
 -- first sequence of numbers and dots from the string.
