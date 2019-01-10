@@ -42,6 +42,10 @@ limitations under the License.
 History
 =======
 
+1.1 xx-jan-2019
+
+ - fixed an accidental global variable
+
 1.0 13-Oct-2017
 
 - many breaking changes, renamed methods, added SemVer, and updated 'strict'

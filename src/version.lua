@@ -271,7 +271,7 @@ _new = function(v, strict)
       return nil, "Not a valid version element: '"..tostring(v).."'"
     end
   else
-    m = v:match("(%d[%d%.]*)")
+    local m = v:match("(%d[%d%.]*)")
     if not m then
       return nil, "Not a valid version element: '"..tostring(v).."'"
     end
