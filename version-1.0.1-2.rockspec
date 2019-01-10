@@ -1,9 +1,9 @@
 package = "version"
-version = "1.0.1-1"
+version = "1.0.1-2"
 
 source = {
-  url = "git://github.com/kong/version.lua",
-  tag = "1.0.1"
+  url = "https://github.com/Kong/version.lua/archive/1.0.1.tar.gz",
+  dir = "version.lua-1.0.1"
 }
 
 description = {
@@ -14,7 +14,7 @@ description = {
       allowed and disallowed ranges/versions.
    ]],
    license = "Apache 2.0",
-   homepage = "https://github.com/Mashape/version.lua"
+   homepage = "https://github.com/Kong/version.lua"
 }
 dependencies = {
    "lua >= 5.1",
