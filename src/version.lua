@@ -46,6 +46,11 @@
 -- @author Thijs Schreijer
 -- @license Apache 2.0
 
+
+local table_insert = table.insert
+local table_concat = table.concat
+local math_max = math.max
+
 -- Utility split function
 local function split(str, pat)
   local t = {}
@@ -55,7 +60,7 @@ local function split(str, pat)
 
   while s do
     if s ~= 1 or cap ~= "" then
-      table.insert(t,cap)
+      table_insert(t,cap)
     end
 
     last_end = e + 1
@@ -64,7 +69,7 @@ local function split(str, pat)
 
   if last_end <= #str then
     cap = str:sub(last_end)
-    table.insert(t, cap)
+    table_insert(t, cap)
   end
 
   return t
@@ -116,7 +121,7 @@ mt_version = {
       end
     },
     __eq = function(a,b)
-      local l = math.max(#a, #b)
+      local l = math_max(#a, #b)
       for i = 1, l do
         if (a[i] or 0) ~= (b[i] or 0) then
           return false
@@ -129,7 +134,7 @@ mt_version = {
         local t = getmetatable(a) ~= mt_version and type(a) or type(b)
         error("cannot compare a 'version' to a '" .. t .. "'", 2)
       end
-      local l = math.max(#a, #b)
+      local l = math_max(#a, #b)
       for i = 1, l do
         if (a[i] or 0) < (b[i] or 0) then
           return true
@@ -141,7 +146,7 @@ mt_version = {
       return false
     end,
     __tostring = function(self)
-      return table.concat(self, ".")
+      return table_concat(self, ".")
     end,
 }
 
@@ -181,11 +186,11 @@ local mt_set = {
       allowed = function(self, v1, v2)
         if getmetatable(v1) == mt_range then
           assert (v2 == nil, "First parameter was a range, second must be nil.")
-          table.insert(self.ok, v1)
+          table_insert(self.ok, v1)
         else
           local r, err = _range(v1, v2, self.strict)
           if not r then return nil, err end
-          table.insert(self.ok, r)
+          table_insert(self.ok, r)
         end
         return self
       end,
@@ -197,11 +202,11 @@ local mt_set = {
       disallowed = function(self,v1, v2)
         if getmetatable(v1) == mt_range then
           assert (v2 == nil, "First parameter was a range, second must be nil.")
-          table.insert(self.nok, v1)
+          table_insert(self.nok, v1)
         else
           local r, err = _range(v1, v2, self.strict)
           if not r then return nil, err end
-          table.insert(self.nok, r)
+          table_insert(self.nok, r)
         end
         return self
       end,
