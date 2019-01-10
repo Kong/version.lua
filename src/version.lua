@@ -93,22 +93,22 @@ mt_version = {
         -- the actual function on the version table itself
         if self[1] == 0 then
           -- major 0 is only compatible when equal
-          self.semver = function(self, v2)
+          self.semver = function(self2, v2)
             if getmetatable(v2) ~= mt_version then
-              local parsed, err = _new(v2, self.strict)
+              local parsed, err = _new(v2, self2.strict)
               if not parsed then return nil, err end
               v2 = parsed
             end
-            return self == v2
+            return self2 == v2
           end
         elseif self[4] then
           -- more than 3 elements, cannot compare
-          self.semver = function(self)
+          self.semver = function()
             return nil, "Version has too many elements (semver max 3)"
           end
         else
           local semver_set = _set(self, self[1] + 1, self.strict):disallowed(self[1] + 1)
-          self.semver = function(self, v2)
+          self.semver = function(_, v2)
             return semver_set:matches(v2)
           end
         end
@@ -342,7 +342,7 @@ local make_module = function(strict)
 
     --- Creates a version range.  A `range` object represents a range of versions.
     -- @param v1 The FROM version of the range (string or `version` object). If `nil`, assumed to be 0.
-    -- @param v2 (optional) The TO version of the range (string or `version` object). If omitted it will default to `v1`.
+    -- @param v2 (optional) The TO version of the range (string or `version` object). Defaults to `v1`.
     -- @return range object with `from` and `to` fields and `set:matches` method, or `nil+err`.
     -- @usage local r = version.range("0.1"," 2.4")
     --

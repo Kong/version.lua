@@ -1,7 +1,7 @@
 Version
 =======
 
-Version comparison library for Lua. Does simple comparisons between versions, 
+Version comparison library for Lua. Does simple comparisons between versions,
 ranges, and sets of ranges. Including basic SemVer support.
 
 License: Apache 2.0
@@ -24,7 +24,7 @@ Copyright and License
 =====================
 
 ```
-Copyright 2017 Kong Inc.
+Copyright 2016-2019 Kong Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

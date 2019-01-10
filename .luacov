@@ -1,0 +1,6 @@
+modules = {
+   ["version"] = "src/version.lua",
+   ["version.*"] = "src"
+}
+runreport = true
+deletestats = false  -- file still needed to push to coveralls
