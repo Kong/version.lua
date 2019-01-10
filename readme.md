@@ -48,6 +48,7 @@ History
 1.1 xx-jan-2019
 
  - fixed an accidental global variable
+ - added check on types to the `__lt` metamethod to prevent accidental bad comparisons
 
 1.0 13-Oct-2017
 

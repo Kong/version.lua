@@ -125,6 +125,10 @@ mt_version = {
       return true
     end,
     __lt = function(a,b)
+      if getmetatable(a) ~= mt_version or getmetatable(b) ~= mt_version then
+        local t = getmetatable(a) ~= mt_version and type(a) or type(b)
+        error("cannot compare a 'version' to a '" .. t .. "'", 2)
+      end
       local l = math.max(#a, #b)
       for i = 1, l do
         if (a[i] or 0) < (b[i] or 0) then

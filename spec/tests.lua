@@ -65,6 +65,12 @@ assert(v4 == v3)
 
 assert(version("0.4") < version("4.0"))
 
+ok, err = pcall(function() return version("0.4") > {} end)
+assert(ok == false)
+print(err)
+assert(err:find("cannot compare a 'version' to a 'table'", 1, true) or  -- Lua 5.2+
+       err:find("attempt to compare two table values", 1, true))        -- Lua 5.1
+
 local sv1 = version("1.2.0.3")  -- too many elements
 local ok, err = sv1:semver("1.2.2")
 print(ok, err)
