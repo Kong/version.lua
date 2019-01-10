@@ -252,7 +252,7 @@ local mt_set = {
         for i = 2, #self.ok - 1 do
           ok = ok .. ", " ..tostring(self.ok[i])
         end
-        ok = ok .. " and " .. tostring(self.ok[#self.ok])
+        ok = ok .. ", and " .. tostring(self.ok[#self.ok])
       end
       if #self.nok == 1 then
         nok = tostring(self.nok[1])
@@ -261,7 +261,7 @@ local mt_set = {
         for i = 2, #self.nok - 1 do
           nok = nok .. ", " ..tostring(self.nok[i])
         end
-        nok = nok .. " and " .. tostring(self.nok[#self.nok])
+        nok = nok .. ", and " .. tostring(self.nok[#self.nok])
       end
       if ok and nok then
         return ok .. ", but not " .. nok
