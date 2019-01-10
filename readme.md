@@ -45,7 +45,7 @@ limitations under the License.
 History
 =======
 
-1.1 xx-jan-2019
+1.0.1 10-Jan-2019
 
  - fixed an accidental global variable
  - added check on types to the `__lt` metamethod to prevent accidental bad comparisons

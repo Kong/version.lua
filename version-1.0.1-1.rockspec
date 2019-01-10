@@ -1,9 +1,9 @@
 package = "version"
-version = "1.0-1"
+version = "1.0.1-1"
 
 source = {
-  url = "https://github.com/Mashape/version.lua/archive/v1_0.tar.gz",
-  dir = "version.lua-1_0"
+  url = "git://github.com/kong/version.lua",
+  tag = "1.0.1"
 }
 
 description = {
@@ -22,5 +22,5 @@ dependencies = {
 
 build = {
    type = "builtin",
-   modules = { version = "src/version.lua" } 
+   modules = { version = "src/version.lua" }
 }
