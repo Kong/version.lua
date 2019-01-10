@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/Kong/version.lua.svg?branch=master)](https://travis-ci.com/Kong/version.lua)
+[![Coverage Status](https://coveralls.io/repos/github/Kong/version.lua/badge.svg?branch=master)](https://coveralls.io/github/Kong/version.lua?branch=master)
+
 Version
 =======
 
