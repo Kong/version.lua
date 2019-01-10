@@ -23,8 +23,8 @@ install:
 
 script:
   - luacheck .
-  - lua ./spec/tests.lua
-  - lua ./spec/lua_versions.lua
+  - lua -lluacov ./spec/tests.lua
+  - lua -lluacov ./spec/lua_versions.lua
 
 after_success:
   - luacov-coveralls
